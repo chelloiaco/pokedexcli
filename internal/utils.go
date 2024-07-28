@@ -38,9 +38,17 @@ Lists to the user the 20 next location areas to explore.
 func printLocationAreas(url string) error {
 	locationareas, err := getLocationAreas(url)
 	if err != nil {
-		return nil
+		log.Fatal(err)
 	}
+
+	// Update current information
+	currentLocationAreas = make(map[string]bool)
+	currentLocationArea = ""
+	currentPokemons = make(map[string]bool)
+
+	fmt.Printf("\nCurrent availeble areas to explore:\n")
 	for i := range locationareas.Results {
+		currentLocationAreas[locationareas.Results[i].Name] = true
 		fmt.Println(locationareas.Results[i].Name)
 	}
 
@@ -63,9 +71,10 @@ func FetchData(url string) (*[]byte, error) {
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		// Check if return is valid
 		if string((*data)[:]) == "Not Found" {
-			fmt.Println("Incorrect name provided.")
+			fmt.Printf("Incorrect name provided.\n")
 			return &[]byte{}, errors.New("not found")
 		}
 
@@ -76,7 +85,7 @@ func FetchData(url string) (*[]byte, error) {
 	return data, nil
 }
 
-func catchAttempt(pokemon Pokemon) bool {
+func catchAttempt(pokemon Pokemon) (bool, bool) {
 	catchChance := catchRate - pokemon.BaseExperience
 	catchSuccessArray := make([]bool, catchRate)
 	for i := 0; i < catchRate; i++ {
@@ -87,5 +96,6 @@ func catchAttempt(pokemon Pokemon) bool {
 		}
 	}
 	success := catchSuccessArray[rand.Intn(len(catchSuccessArray))]
-	return success
+	ranAway := rand.Int()%3 == 0
+	return success, ranAway
 }

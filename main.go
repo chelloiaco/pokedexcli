@@ -23,7 +23,8 @@ func main() {
 				result.Callback(text[1])
 			}
 		} else {
-			fmt.Printf("Input not recognized - '%s'\nType 'help' for more info\n", scanner.Text())
+			fmt.Printf("\nInput not recognized - '%s'\nType 'help' for more info\n", scanner.Text())
 		}
+		fmt.Println()
 	}
 }
